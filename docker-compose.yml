@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  fde-assessment:
+    build: .
+    container_name: fde-assessment
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "sh", "-c", "wget -qO- http://localhost:8080/actuator/health 2>/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

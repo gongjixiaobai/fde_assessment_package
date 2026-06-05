@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作项列表 — FDE 考核系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="header">
+    <h1>📋 工作项流转系统</h1>
+    <div>
+        <a href="/board" class="nav-link" style="margin-right:12px;">看板</a>
+        <a href="/" class="nav-link">列表</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <div class="card-title">工作项列表</div>
+        <div class="filter-bar">
+            <select id="filterStatus">
+                <option value="">全部状态</option>
+                <option value="DRAFT">草稿</option>
+                <option value="ANALYZING">待分析</option>
+                <option value="READY">已准备</option>
+                <option value="IN_PROGRESS">开发中</option>
+                <option value="TESTING">测试中</option>
+                <option value="DONE">已完成</option>
+            </select>
+            <select id="filterType">
+                <option value="">全部类型</option>
+                <option value="STORY">需求</option>
+                <option value="BUG">缺陷</option>
+                <option value="TASK">任务</option>
+            </select>
+            <select id="filterPriority">
+                <option value="">全部优先级</option>
+                <option value="P0">P0</option>
+                <option value="P1">P1</option>
+                <option value="P2">P2</option>
+            </select>
+            <input type="text" id="filterKeyword" placeholder="搜索标题/描述..." style="width:200px;">
+            <button class="btn btn-primary" onclick="loadWorkItems()">查询</button>
+            <button class="btn btn-success" onclick="showCreateDialog()">+ 新建工作项</button>
+        </div>
+        <div id="messageArea"></div>
+        <div id="workItemTable">
+            <div class="loading">加载中...</div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Dialog -->
+<div id="createDialog" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;">
+    <div class="card" style="width:500px;max-height:90vh;overflow-y:auto;">
+        <div class="card-title">新建工作项</div>
+        <div class="form-group"><label>标题 *</label><input type="text" id="createTitle"></div>
+        <div class="form-group"><label>描述</label><textarea id="createDesc"></textarea></div>
+        <div class="flex-row">
+            <div class="form-group flex-grow"><label>类型 *</label>
+                <select id="createType"><option value="STORY">需求</option><option value="BUG">缺陷</option><option value="TASK">任务</option></select>
+            </div>
+            <div class="form-group flex-grow"><label>优先级 *</label>
+                <select id="createPriority"><option value="P1">P1</option><option value="P0">P0</option><option value="P2">P2</option></select>
+            </div>
+        </div>
+        <div class="form-group"><label>负责人</label><input type="text" id="createAssignee"></div>
+        <div class="form-group"><label>标签 (JSON数组)</label><input type="text" id="createTags" placeholder='["tag1","tag2"]'></div>
+        <div class="form-group"><label>验收标准 (JSON数组)</label><textarea id="createCriteria" placeholder='["标准1","标准2"]'></textarea></div>
+        <div class="form-group"><label>风险等级</label>
+            <select id="createRisk"><option value="">不设置</option><option value="HIGH">高</option><option value="MEDIUM">中</option><option value="LOW">低</option></select>
+        </div>
+        <div class="flex-row" style="justify-content:flex-end;gap:8px;">
+            <button class="btn btn-default" onclick="closeCreateDialog()">取消</button>
+            <button class="btn btn-primary" onclick="createWorkItem()">创建</button>
+        </div>
+    </div>
+</div>
+
+<script src="/js/main.js"></script>
+<script>
+    loadWorkItems();
+
+    function showCreateDialog() {
+        document.getElementById('createDialog').style.display = 'flex';
+    }
+    function closeCreateDialog() {
+        document.getElementById('createDialog').style.display = 'none';
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工作项详情 — FDE 考核系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="header">
+    <h1>📋 工作项详情</h1>
+    <div>
+        <a href="/board" class="nav-link" style="margin-right:12px;">看板</a>
+        <a href="/" class="nav-link">← 返回列表</a>
+    </div>
+</div>
+
+<div class="container">
+    <div id="messageArea"></div>
+
+    <!-- Basic Info -->
+    <div class="card" id="infoCard">
+        <div class="loading">加载中...</div>
+    </div>
+
+    <!-- State Transition -->
+    <div class="card" id="transitionCard" style="display:none;">
+        <div class="card-title">状态流转</div>
+        <div id="transitionContent"></div>
+    </div>
+
+    <!-- Clarification Questions -->
+    <div class="card" id="questionCard" style="display:none;">
+        <div class="card-title">澄清问题</div>
+        <div id="questionList"></div>
+        <div class="flex-row mt-16" id="addQuestionForm">
+            <div class="form-group flex-grow"><input type="text" id="newQuestionContent" placeholder="输入新的澄清问题..."></div>
+            <div class="form-group">
+                <select id="newQuestionSeverity">
+                    <option value="HIGH">高</option>
+                    <option value="MEDIUM">中</option>
+                    <option value="LOW">低</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="addQuestion()">添加问题</button>
+        </div>
+    </div>
+
+    <!-- AI Analysis -->
+    <div class="card" id="aiCard" style="display:none;">
+        <div class="card-title">AI 辅助分析</div>
+        <button class="btn btn-primary" onclick="triggerAIAnalysis()" id="aiBtn">🤖 触发 AI 分析</button>
+        <div id="aiResult" class="mt-16"></div>
+    </div>
+
+    <!-- History -->
+    <div class="card" id="historyCard" style="display:none;">
+        <div class="card-title">流转历史</div>
+        <div id="historyList"></div>
+    </div>
+</div>
+
+<script>const WORK_ITEM_ID = new URLSearchParams(window.location.search).get('id');</script>
+<script src="/js/main.js"></script>
+<script>
+    if (!WORK_ITEM_ID) {
+        window.location.href = '/';
+    } else {
+        loadDetail();
+    }
+</script>
+</body>
+</html>

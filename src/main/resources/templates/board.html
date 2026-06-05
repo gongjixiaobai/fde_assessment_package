@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>看板 — FDE 考核系统</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .board-container {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 16px;
+        }
+        .board-column {
+            min-width: 280px;
+            flex: 1;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .board-card {
+            background: #fff;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+        .board-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .col-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .col-count {
+            background: #e0e0e0;
+            border-radius: 10px;
+            padding: 2px 10px;
+            font-size: 12px;
+        }
+        .board-card .card-meta {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .board-card .card-assignee {
+            font-size: 12px;
+            color: #888;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>📋 工作项看板</h1>
+    <div>
+        <a href="/board" class="nav-link" style="margin-right:12px;">看板</a>
+        <a href="/" class="nav-link">列表</a>
+    </div>
+</div>
+
+<div class="container">
+    <div id="boardContainer" class="board-container">
+        <div class="loading">加载中...</div>
+    </div>
+</div>
+
+<script>
+const API_BASE = '/api';
+async function apiGet(path) {
+    const res = await fetch(API_BASE + path);
+    if (!res.ok) throw res;
+    return res.json();
+}
+
+const STATUSES = ['DRAFT', 'ANALYZING', 'READY', 'IN_PROGRESS', 'TESTING', 'DONE'];
+const STATUS_LABELS = {
+    'DRAFT': '草稿', 'ANALYZING': '待分析', 'READY': '已准备',
+    'IN_PROGRESS': '开发中', 'TESTING': '测试中', 'DONE': '已完成'
+};
+const TYPE_LABELS = {
+    'STORY': '需求', 'BUG': '缺陷', 'TASK': '任务'
+};
+
+function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+async function loadBoard() {
+    try {
+        const items = await apiGet('/workitems?page=1&size=200');
+        renderBoard(items);
+    } catch (e) {
+        document.getElementById('boardContainer').innerHTML = '<div class="error-msg">加载失败</div>';
+    }
+}
+
+function renderBoard(items) {
+    const grouped = {};
+    STATUSES.forEach(s => grouped[s] = []);
+    (items || []).forEach(item => {
+        if (grouped[item.status]) {
+            grouped[item.status].push(item);
+        }
+    });
+
+    let html = '';
+    STATUSES.forEach(status => {
+        const columnItems = grouped[status] || [];
+        html += '<div class="board-column">';
+        html += '<div class="col-header">';
+        html += '<span style="font-weight:600;font-size:14px;">' + STATUS_LABELS[status] + '</span>';
+        html += '<span class="col-count">' + columnItems.length + '</span>';
+        html += '</div>';
+
+        columnItems.forEach(item => {
+            html += '<div class="board-card" onclick="window.location.href=\'/detail?id=' + item.id + '\'">';
+            html += '<div style="font-weight:500;font-size:14px;margin-bottom:6px;">' + escapeHtml(item.title) + '</div>';
+            html += '<div class="card-meta">';
+            html += '<span class="badge">' + (TYPE_LABELS[item.type] || item.type) + '</span>';
+            html += '<span class="badge badge-' + (item.priority || '').toLowerCase() + '">' + item.priority + '</span>';
+            html += '</div>';
+            if (item.assignee) {
+                html += '<div class="card-assignee">👤 ' + escapeHtml(item.assignee) + '</div>';
+            }
+            html += '</div>';
+        });
+
+        if (columnItems.length === 0) {
+            html += '<div style="color:#bbb;font-size:13px;text-align:center;padding:16px;">暂无</div>';
+        }
+
+        html += '</div>';
+    });
+
+    document.getElementById('boardContainer').innerHTML = html;
+}
+
+loadBoard();
+</script>
+</body>
+</html>
