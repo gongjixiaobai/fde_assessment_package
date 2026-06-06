@@ -1,8 +1,7 @@
 # AI 辅助研发工作项流转与需求澄清系统
 
-## 1. 题目方向
-
-**后端方向（Java / Spring Boot）**
+## 1. 系统概述
+本系统旨在通过 AI 技术辅助研发工作项的流转和需求澄清，提升效率和质量。
 
 ## 2. 功能清单
 
@@ -75,7 +74,7 @@ DRAFT ←→ ANALYZING ←→ READY ←→ IN_PROGRESS ←→ TESTING ──→ 
 
 ### API 设计
 
-RESTful 风格，4 个模块 12 个端点，详见 [api-design-proposal.md](api-design-proposal.md)。
+RESTful 风格，4 个模块 12 个端点，详见 [api-design-proposal.md](templates/api-design-proposal.md)。
 
 ### AI 服务封装
 
@@ -140,7 +139,7 @@ src/main/java/com/fde/assessment/
 
 ## 9. AI 使用说明
 
-详见 [ai-usage-record.md](ai-usage-record.md)。
+详见 [ai-usage-record.md](templates/ai-usage.md)。
 
 使用 OpenCode (Sisyphus) 全流程辅助：需求分析 → 架构设计 → 代码生成 → 测试（32 个用例）→ 文档 → 加分项实施。
 
