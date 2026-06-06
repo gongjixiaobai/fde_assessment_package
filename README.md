@@ -158,3 +158,12 @@ docker-compose down
 # - 健康检查: http://localhost:8080/actuator/health
 ```
 
+## 11. 效果图
+<img src="docs/images/3.png" alt="Architecture">
+
+<img src="docs/images/1.png" alt="Architecture">
+
+<img src="docs/images/2.png" alt="Architecture">
+
+
+
